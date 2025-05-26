@@ -18,13 +18,20 @@
         border: 1px solid #444;
         background-color: #1e1e1e;
         overflow: scroll;
+        margin-top: 20px;
       }
       
       .form-container {
         margin-bottom: 20px;
+        padding: 10px;
+        background-color: #1e1e1e;
+        border: 1px solid #444;
+        border-radius: 8px;
       }
       
       input[type='number'],
+      input[type='text'],
+      select,
       button {
         background-color: #333;
         color: #fff;
@@ -34,7 +41,8 @@
         border-radius: 4px;
       }
       
-      input[type='number']:focus {
+      input:focus,
+      select:focus {
         outline: none;
         border-color: #888;
       }
@@ -69,9 +77,26 @@
     <h1>🌳 Branch & Bound - Programação Inteira (Tema Escuro)</h1>
 
     <div class="form-container">
+      <h3>Criar Novo Grafo</h3>
+      <label for="novo_nome">Nome do Grafo:</label>
+      <input type="text" id="novo_nome" placeholder="ex: exemplo1" required />
+      <br />
       <label for="num_vars">Número de variáveis:</label>
       <input type="number" id="num_vars" min="1" value="2" />
-      <button onclick="iniciarGrafo()">Iniciar Grafo</button>
+      <br />
+      <button onclick="criarNovoGrafo()">Criar Novo Grafo</button>
+    </div>
+
+    <div class="form-container">
+      <h3>Continuar Grafo Existente</h3>
+      <label for="grafo_existente">Selecione:</label>
+      <select id="grafo_existente">
+        {% for grafo in grafos %}
+          <option value="{{ grafo }}">{{ grafo }}</option>
+        {% endfor %}
+      </select>
+      <br />
+      <button onclick="continuarGrafo()">Carregar Grafo</button>
     </div>
 
     <div id="graph"></div>
@@ -89,6 +114,115 @@
       <button onclick="fecharModal()">Cancelar</button>
       <button onclick="podar()">Podar</button>
     </div>
+
     <script src="/static/script.js"></script>
+    <script>
+      let nomeGrafoAtual = ''
+      function criarNovoGrafo() {
+        const nome = document.getElementById('novo_nome').value.trim()
+        const numVars = parseInt(document.getElementById('num_vars').value)
+      
+        if (!nome) {
+          alert('Digite um nome para o grafo.')
+          return
+        }
+      
+        fetch('/criar_grafo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome: nome, num_vars: numVars })
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.ok) {
+              nomeGrafoAtual = nome
+              document.getElementById('num_vars').value = numVars
+              iniciarGrafo()
+            }
+          })
+      }
+      
+      function continuarGrafo() {
+        const nome = document.getElementById('grafo_existente').value
+        if (!nome) return
+      
+        nomeGrafoAtual = nome
+      
+        fetch(`/carregar_grafo/${nome}`)
+          .then((res) => res.json())
+          .then((nos) => {
+            // Resetar estrutura
+            grafo = {}
+            nodes = new vis.DataSet()
+            edges = new vis.DataSet()
+      
+            // Preencher grafo e identificar nível de cada nó (profundidade)
+            nos.forEach((no) => {
+              grafo[no.id] = {
+                id: no.id,
+                pai: no.pai !== '0' ? no.pai : null,
+                z: no.z !== null ? parseFloat(no.z) : null,
+                vars: no.vars.map((v) => {
+                  const parsed = parseFloat(v)
+                  return isNaN(parsed) ? v : parsed
+                }),
+                status: no.status,
+                level: 0 // Temporário, ajustado depois
+              }
+            })
+      
+            // Determinar níveis hierárquicos dos nós
+            for (const id in grafo) {
+              let level = 0
+              let atual = grafo[id]
+              while (atual.pai && grafo[atual.pai]) {
+                level++
+                atual = grafo[atual.pai]
+              }
+              grafo[id].level = level
+            }
+      
+            // Adiciona visualmente os nós e arestas
+            for (const id in grafo) {
+              const no = grafo[id]
+              adicionarNo(no.id, no.pai, no.z, no.vars, no.status)
+            }
+      
+            const container = document.getElementById('graph')
+            const data = { nodes: nodes, edges: edges }
+            const options = {
+              layout: {
+                hierarchical: {
+                  direction: 'UD',
+                  sortMethod: 'directed',
+                  nodeSpacing: 200,
+                  levelSeparation: 150,
+                  treeSpacing: 300
+                }
+              },
+              nodes: {
+                shape: 'box',
+                margin: 10
+              },
+              edges: {
+                arrows: 'to'
+              },
+              physics: false,
+              interaction: {
+                zoomView: false,
+                dragView: false
+              }
+            }
+      
+            network = new vis.Network(container, data, options)
+            network.on('click', function (params) {
+              if (params.nodes.length > 0) {
+                nodeSelecionado = params.nodes[0]
+                abrirModal(nodeSelecionado)
+              }
+            })
+          })
+      }
+    </script>
   </body>
 </html>

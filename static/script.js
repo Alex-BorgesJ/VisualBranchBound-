@@ -4,6 +4,7 @@ let grafo = {};
 let numVars = 2;
 let varsPrefix = "x";
 let nodeSelecionado = null;
+let nomeGrafo = "grafo1"; // Nome fixo ou pode ser dinamizado
 
 function iniciarGrafo() {
     numVars = parseInt(document.getElementById("num_vars").value);
@@ -59,25 +60,23 @@ function adicionarNo(id, pai, z, vars, status) {
 
     const level = pai ? grafo[pai].level + 1 : 0;
 
-    // Cores por tipo de nó
     let color = "#FFFFFF";
     if (status === "podado") color = "#CCCCCC";
-    else if (status === "upper") color = "#87CEEB";   // azul claro
-    else if (status === "lower") color = "#FF6347";   // vermelho
+    else if (status === "upper") color = "#87CEEB";
+    else if (status === "lower") color = "#FF6347";
     else {
         const isInteiro = vars.every(v => typeof v === "number" && Number.isInteger(v));
         color = isInteiro ? "#ADD8E6" : "#FF7F7F";
     }
 
-    // Estilo de borda
     let borderWidth = 1;
     let borderDashes = false;
     if (status === "upper") {
         borderWidth = 4;
-        borderDashes = [5, 0]; // Simula borda horizontal dupla
+        borderDashes = [5, 0];
     } else if (status === "lower") {
         borderWidth = 4;
-        borderDashes = [0, 5]; // Simula borda vertical dupla
+        borderDashes = [0, 5];
     }
 
     nodes.add({
@@ -106,6 +105,8 @@ function adicionarNo(id, pai, z, vars, status) {
     if (pai) {
         edges.add({ from: pai, to: id, color: { color: "#ffffff" } });
     }
+
+    salvarNoNoServidor(grafo, id); // Salva no backend
 }
 
 function abrirModal(id) {
@@ -121,11 +122,7 @@ function abrirModal(id) {
         input.step = "any";
         input.placeholder = `${varsPrefix}${i + 1}`;
         input.id = `var_${i}`;
-        if (typeof no.vars[i] === "number") {
-            input.value = no.vars[i];
-        } else {
-            input.value = "";
-        }
+        input.value = typeof no.vars[i] === "number" ? no.vars[i] : "";
         varsDiv.appendChild(input);
         varsDiv.appendChild(document.createElement("br"));
     }
@@ -140,7 +137,6 @@ function fecharModal() {
 
 function salvarNo() {
     const id = nodeSelecionado;
-    const no = grafo[id];
     const z = parseFloat(document.getElementById("z_input").value);
     const vars = [];
 
@@ -159,7 +155,8 @@ function salvarNo() {
         font: { strikethrough: false }
     });
 
-    // Gerar filhos para variáveis fracionárias
+    salvarNoNoServidor(grafo, id); // Salva nó atualizado
+
     for (let i = 0; i < vars.length; i++) {
         if (!Number.isInteger(vars[i])) {
             const floor = Math.floor(vars[i]);
@@ -184,14 +181,16 @@ function salvarNo() {
 
 function podar() {
     const id = nodeSelecionado;
-    const no = grafo[id];
     grafo[id].status = "podado";
+
     nodes.update({
         id,
-        label: gerarLabel(id, no.z, no.vars, "podado"),
+        label: gerarLabel(id, grafo[id].z, grafo[id].vars, "podado"),
         font: { strikethrough: true }
     });
-    // Remove filhos do nó podado
+
+    salvarNoNoServidor(grafo, id); // Atualiza status no backend
+
     edges.get().forEach(edge => {
         if (edge.from === id) {
             const childId = edge.to;
@@ -200,6 +199,7 @@ function podar() {
             edges.remove({ id: edge.id });
         }
     });
+
     fecharModal();
 }
 
@@ -209,6 +209,29 @@ function gerarLabel(id, z, vars, status) {
         label += `\n${varsPrefix + (i + 1)}=${v !== null ? v : "?"}`;
     });
     return label + `\n(${status})`;
+}
+
+function salvarNoNoServidor(grafoLocal, id) {
+    const no = grafoLocal[id];
+
+    fetch("/salvar_no", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            grafo: nomeGrafo,
+            id: no.id,
+            pai: no.pai,
+            z: no.z,
+            vars: no.vars,
+            status: no.status
+        })
+    }).then(response => {
+        if (!response.ok) {
+            console.error("Erro ao salvar nó:", id);
+        }
+    }).catch(err => {
+        console.error("Erro de rede ao salvar nó:", err);
+    });
 }
 
 document.addEventListener("keydown", function (event) {
