@@ -19,7 +19,7 @@ function iniciarGrafo() {
     const options = {
         layout: {
             hierarchical: {
-                direction: "UD",
+                direction: "UD", // <-- Horizontal (Left to Right)
                 sortMethod: "directed",
                 nodeSpacing: 200,
                 levelSeparation: 150,
@@ -36,9 +36,12 @@ function iniciarGrafo() {
         physics: false,
         interaction: {
             zoomView: false,
-            dragView: false
+            dragView: true, // <-- Habilita pan com mouse
+            dragNodes: false,
+            navigationButtons: true
         }
     };
+
 
     network = new vis.Network(container, data, options);
 
