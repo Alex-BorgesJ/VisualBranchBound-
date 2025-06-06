@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Caixeiro Viajante</title>
+    <script src="{{ url_for('static', filename='tsp.js') }}"></script>
+  </head>
+  <body>
+    <h1>Problema do Caixeiro Viajante</h1>
+    <label for="numCities">Número de Cidades:</label>
+    <input type="number" id="numCities" min="2" value="4" />
+    <button onclick="generateMatrix()">Gerar Matriz</button>
+    <br /><br />
+    <div id="matrixContainer"></div>
+    <br />
+    <label for="origin">Cidade de Origem (opcional):</label>
+    <select id="origin">
+      <option value="">Não definida</option>
+    </select>
+    <br /><br />
+    <button onclick="solveTSP()">Resolver</button>
+    <br /><br />
+    <div id="result"></div>
+  </body>
+</html>

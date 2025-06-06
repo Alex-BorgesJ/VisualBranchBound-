@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from tsp_solver import solve_tsp
 import os
 import json
 
@@ -42,6 +43,20 @@ def listar_grafos():
     arquivos = os.listdir(GRAFOS_DIR)
     nomes = [arq.replace(".json", "") for arq in arquivos if arq.endswith(".json")]
     return jsonify(nomes)
+
+@app.route('/tsp')
+def tsp():
+    return render_template('tsp.html')
+
+@app.route('/solve_tsp', methods=['POST'])
+def solve_tsp_route():
+    data = request.get_json()
+    cost_matrix = data.get('cost_matrix')
+    origin = data.get('origin')
+    from tsp_solver import solve_tsp, convert_numpy
+    result = solve_tsp(cost_matrix, origin)
+    return jsonify(convert_numpy(result))  # convertendo antes de retornar
+
 
 if __name__ == '__main__':
     import webbrowser
