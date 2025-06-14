@@ -1,0 +1,3 @@
+#!C:\Users\joaop\OneDrive\Área de Trabalho\repositorios\VisualBranchBound-\.venv\Scripts\python.exe
+from tsp_solver.demo import tsp
+tsp.main()

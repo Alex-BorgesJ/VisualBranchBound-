@@ -15,8 +15,6 @@ function generateMatrix() {
     for(let c = 0; c < numCities; c++){
         const th = document.createElement('th');
         th.innerText = `Destino ${c + 1}`;
-        th.style.border = '1px solid black';
-        th.style.padding = '5px';
         headerRow.appendChild(th);
     }
     table.appendChild(headerRow);
@@ -27,8 +25,6 @@ function generateMatrix() {
         // Cabeçalho da linha
         const th = document.createElement('th');
         th.innerText = `Destino ${i + 1}`;
-        th.style.border = '1px solid black';
-        th.style.padding = '5px';
         row.appendChild(th);
 
         for (let j = 0; j < numCities; j++) {
@@ -37,14 +33,17 @@ function generateMatrix() {
             input.min = 0;
             input.value = i === j ? 0 : '';
             input.id = `cell-${i}-${j}`;
-            input.style.width = '50px';
-            input.style.textAlign = 'center';
-            input.style.border = '1px solid black';
-            input.style.padding = '2px';
+            
+            // Se for um elemento da diagonal principal (i === j)
+            if (i === j) {
+                input.readOnly = true;
+                input.style.backgroundColor = '#2a2a2a';
+                input.style.cursor = 'not-allowed';
+                input.title = 'Distância de uma cidade para ela mesma é sempre 0';
+            }
 
             const td = document.createElement('td');
             td.appendChild(input);
-            td.style.border = '1px solid black';
             row.appendChild(td);
         }
         table.appendChild(row);
@@ -94,4 +93,31 @@ function solveTSP() {
         });
         resultDiv.innerHTML = html;
     });
+}
+
+function displayResult(result) {
+    const resultDiv = document.getElementById('result');
+    const bestRoute = document.getElementById('bestRoute');
+    const totalDistance = document.getElementById('totalDistance');
+    const executionTime = document.getElementById('executionTime');
+
+    if (result.error) {
+        bestRoute.textContent = '-';
+        totalDistance.textContent = '-';
+        executionTime.textContent = '-';
+        resultDiv.classList.add('error');
+        return;
+    }
+
+    // Formata a rota
+    const route = result.route.map(city => `Cidade ${city}`).join(' → ');
+    bestRoute.textContent = route;
+
+    // Formata a distância total
+    totalDistance.textContent = `${result.totalDistance.toFixed(2)} unidades`;
+
+    // Formata o tempo de execução
+    executionTime.textContent = `${result.executionTime.toFixed(2)} segundos`;
+
+    resultDiv.classList.remove('error');
 }

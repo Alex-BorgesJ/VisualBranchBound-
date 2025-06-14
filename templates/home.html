@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>🌳 Algoritmos de Otimização</title>
+  <link rel="stylesheet" href="/static/global.css">
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .title {
+      font-size: 2.5em;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .buttons-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .app-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #1e1e1e;
+      border: 2px solid #444;
+      transition: all 0.3s ease;
+      min-width: 200px;
+    }
+
+    .app-button:hover {
+      transform: translateY(-5px);
+      border-color: #666;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .app-icon {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+
+    .app-title {
+      font-size: 1.2em;
+      color: #fff;
+      margin: 0;
+    }
+
+    .app-description {
+      color: #aaa;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">🌳 Algoritmos de Otimização</h1>
+    
+    <div class="buttons-container">
+      <a href="/branch-bound" class="app-button">
+        <span class="app-icon">🌳</span>
+        <h2 class="app-title">Branch & Bound</h2>
+        <p class="app-description">Programação Inteira</p>
+      </a>
+
+      <a href="/tsp" class="app-button">
+        <span class="app-icon">🗺️</span>
+        <h2 class="app-title">Caixeiro Viajante</h2>
+        <p class="app-description">Problema do TSP</p>
+      </a>
+    </div>
+  </div>
+</body>
+</html> 

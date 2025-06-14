@@ -1,0 +1,28 @@
+{
+  "rota_final": [
+    "Destino 1",
+    "Destino 2",
+    "Destino 1"
+  ],
+  "custo_final": 11.0,
+  "etapas": [
+    {
+      "etapa": "Vizinho mais pr\u00f3ximo - origem Destino 1",
+      "rota": [
+        "Destino 1",
+        "Destino 2",
+        "Destino 1"
+      ],
+      "custo": 11.0
+    },
+    {
+      "etapa": "Vizinho mais pr\u00f3ximo - origem Destino 2",
+      "rota": [
+        "Destino 2",
+        "Destino 1",
+        "Destino 2"
+      ],
+      "custo": 11.0
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+/* Estilos gerais */
+body {
+    background-color: #121212;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    color: #fff;
+}
+
+/* Estilos dos inputs e selects */
+input[type="number"], select {
+    background-color: #1a1a1a;
+    color: white;
+    border: 1px solid #333;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+/* Estilos dos botões */
+button {
+    background-color: #2a2a2a;
+    color: white;
+    border: 1px solid #333;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3a3a3a;
+}
+
+/* Estilos da matriz */
+#matrixContainer {
+    background-color: #1a1a1a;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+#matrixContainer table {
+    border-collapse: collapse;
+    text-align: center;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    width: 100%;
+}
+
+#matrixContainer th {
+    border: 1px solid #333;
+    padding: 8px;
+    background-color: #2a2a2a;
+}
+
+#matrixContainer td {
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #1a1a1a;
+}
+
+#matrixContainer input {
+    width: 60px;
+    text-align: center;
+    border: 1px solid #333;
+    padding: 5px;
+    background-color: #1a1a1a;
+    color: white;
+    border-radius: 4px;
+}
+
+/* Estilos da área de resultados */
+#result {
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+#result h2, #result h3 {
+    color: #fff;
+} 
