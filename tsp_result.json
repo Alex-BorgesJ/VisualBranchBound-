@@ -1,0 +1,61 @@
+{
+  "rota_final": [
+    "Destino 1",
+    "Destino 3",
+    "Destino 2",
+    "Destino 1"
+  ],
+  "custo_final": 12.0,
+  "etapas": [
+    {
+      "etapa": "Vizinho mais pr\u00f3ximo - origem Destino 1",
+      "rota": [
+        "Destino 1",
+        "Destino 3",
+        "Destino 2",
+        "Destino 1"
+      ],
+      "custo": 12.0
+    },
+    {
+      "etapa": "Vizinho mais pr\u00f3ximo - origem Destino 2",
+      "rota": [
+        "Destino 2",
+        "Destino 1",
+        "Destino 3",
+        "Destino 2"
+      ],
+      "custo": 12.0
+    },
+    {
+      "etapa": "Vizinho mais pr\u00f3ximo - origem Destino 3",
+      "rota": [
+        "Destino 3",
+        "Destino 1",
+        "Destino 2",
+        "Destino 3"
+      ],
+      "custo": 14.0
+    },
+    {
+      "etapa": "Troca 2-opt na posi\u00e7\u00e3o 1 at\u00e9 2",
+      "rota": [
+        "Destino 1",
+        "Destino 2",
+        "Destino 3",
+        "Destino 1"
+      ],
+      "custo": 14.0
+    },
+    {
+      "etapa": "Troca 2-opt na posi\u00e7\u00e3o 1 at\u00e9 2",
+      "rota": [
+        "Destino 2",
+        "Destino 3",
+        "Destino 1",
+        "Destino 2"
+      ],
+      "custo": 14.0
+    }
+  ]
+}
