@@ -2,10 +2,15 @@ from flask import Flask, render_template, request, jsonify
 from tsp_solver import solve_tsp
 import os
 import json
+import webbrowser
+from threading import Timer
 
 app = Flask(__name__)
 GRAFOS_DIR = 'grafos'
 os.makedirs(GRAFOS_DIR, exist_ok=True)
+
+def open_browser():
+    webbrowser.open('http://localhost:5000')
 
 @app.route('/')
 def home():
@@ -61,6 +66,5 @@ def solve_tsp_route():
     return jsonify(convert_numpy(result))  # convertendo antes de retornar
 
 if __name__ == '__main__':
-    import webbrowser
-    webbrowser.open("http://localhost:5000")
-    app.run(debug=True)
+    Timer(1.5, open_browser).start()
+    app.run(debug=False, use_reloader=False)
