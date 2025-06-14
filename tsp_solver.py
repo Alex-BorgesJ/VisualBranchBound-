@@ -54,7 +54,7 @@ def k_opt(cost_matrix, path, k):
         new_cost = calc_cost(cost_matrix, new_path)
 
         etapas.append({
-            "etapa": f"Troca {k}-opt na posição {i+1} até {i+k}",
+            "etapa": f"Reversao {k} por vez na posição {i+1} até {i+k}",
             "rota": new_path[:],
             "custo": float(new_cost)
         })

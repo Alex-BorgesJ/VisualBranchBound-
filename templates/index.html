@@ -1,120 +1,95 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌳 Branch & Bound - Tema Escuro</title>
-  <link rel="stylesheet" href="/static/styles/global.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-</head>
-<body>
-  <div class="container">
-    <h1><i class="fas fa-project-diagram"></i> Branch & Bound - Programação Inteira</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌳 Branch & Bound - Tema Escuro</title>
+    <link rel="stylesheet" href="/static/styles/global.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1><i class="fas fa-project-diagram"></i> Branch & Bound - Programação Inteira</h1>
 
-    <div class="form-container">
-      <div class="form-group">
-        <label for="num_vars"><i class="fas fa-calculator"></i> Número de variáveis:</label>
-        <div class="controls">
-          <input type="number" id="num_vars" min="1" value="2" />
-          <button onclick="iniciarGrafo()" class="btn">
-            <i class="fas fa-play"></i> Iniciar Grafo
-          </button>
+      <div class="form-container">
+        <div class="form-group">
+          <label for="num_vars"><i class="fas fa-calculator"></i> Número de variáveis:</label>
+          <div class="controls">
+            <input type="number" id="num_vars" min="1" value="2" />
+            <button onclick="iniciarGrafo()" class="btn"><i class="fas fa-play"></i> Iniciar Grafo</button>
+            <button onclick="alternarGeracaoAutomatica()" class="btn" id="btnToggleGeracao"><i class="fas fa-robot"></i> Geração Automática: ON</button>
+          </div>
         </div>
       </div>
+
+      <div class="form-container">
+        <div class="button-group">
+          <button onclick="abrirSalvarModal()" class="btn"><i class="fas fa-save"></i> Salvar</button>
+          <button onclick="abrirCarregarModal()" class="btn"><i class="fas fa-folder-open"></i> Carregar</button>
+        </div>
+      </div>
+
+      <div id="graph" class="fade-in"></div>
     </div>
 
-    <div class="form-container">
-      <div class="button-group">
-        <button onclick="abrirSalvarModal()" class="btn">
-          <i class="fas fa-save"></i> Salvar
-        </button>
-        <button onclick="abrirCarregarModal()" class="btn">
-          <i class="fas fa-folder-open"></i> Carregar
-        </button>
+    <!-- Modal de Edição de Nó -->
+    <div id="modal" class="modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Preencher nó</h3>
+        <button onclick="fecharModal()" class="modal-close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="form-group">
+        <label for="z_input">Z:</label>
+        <div class="controls">
+          <input type="number" step="any" id="z_input" />
+        </div>
+      </div>
+      <div id="vars_inputs" class="mt-2"></div>
+      <div class="button-group mt-2">
+        <button onclick="salvarNo()" class="btn"><i class="fas fa-save"></i> Salvar</button>
+        <button onclick="fecharModal()" class="btn"><i class="fas fa-times"></i> Cancelar</button>
+        <button onclick="podar()" class="btn"><i class="fas fa-cut"></i> Podar</button>
       </div>
     </div>
 
-    <div id="graph" class="fade-in"></div>
-  </div>
-
-  <!-- Modal de Edição de Nó -->
-  <div id="modal" class="modal">
-    <div class="modal-header">
-      <h3><i class="fas fa-edit"></i> Preencher nó</h3>
-      <button onclick="fecharModal()" class="modal-close">
-        <i class="fas fa-times"></i>
-      </button>
+    <!-- Modal de Salvar -->
+    <div id="modalSalvar" class="modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-save"></i> Salvar Grafo</h3>
+        <button onclick="fecharModalSalvar()" class="modal-close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="form-group">
+        <label for="nomeSalvar">Nome do grafo:</label>
+        <div class="controls">
+          <input type="text" id="nomeSalvar" placeholder="Digite um nome" />
+        </div>
+      </div>
+      <div class="button-group mt-2">
+        <button onclick="salvarGrafo()" class="btn"><i class="fas fa-save"></i> Salvar</button>
+        <button onclick="fecharModalSalvar()" class="btn"><i class="fas fa-times"></i> Cancelar</button>
+      </div>
+      <p id="msgSalvar" class="msg"></p>
     </div>
-    <div class="form-group">
-      <label for="z_input">Z:</label>
-      <div class="controls">
-        <input type="number" step="any" id="z_input" />
+
+    <!-- Modal de Carregar -->
+    <div id="modalCarregar" class="modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-folder-open"></i> Carregar Grafo</h3>
+        <button onclick="fecharModalCarregar()" class="modal-close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="form-group">
+        <label for="selectGrafo">Selecione o grafo:</label>
+        <div class="controls">
+          <select id="selectGrafo"></select>
+        </div>
+      </div>
+      <div class="button-group mt-2">
+        <button onclick="confirmarCarregamento()" class="btn"><i class="fas fa-folder-open"></i> Carregar</button>
+        <button onclick="fecharModalCarregar()" class="btn"><i class="fas fa-times"></i> Cancelar</button>
       </div>
     </div>
-    <div id="vars_inputs" class="mt-2"></div>
-    <div class="button-group mt-2">
-      <button onclick="salvarNo()" class="btn">
-        <i class="fas fa-save"></i> Salvar
-      </button>
-      <button onclick="fecharModal()" class="btn">
-        <i class="fas fa-times"></i> Cancelar
-      </button>
-      <button onclick="podar()" class="btn">
-        <i class="fas fa-cut"></i> Podar
-      </button>
-    </div>
-  </div>
 
-  <!-- Modal de Salvar -->
-  <div id="modalSalvar" class="modal">
-    <div class="modal-header">
-      <h3><i class="fas fa-save"></i> Salvar Grafo</h3>
-      <button onclick="fecharModalSalvar()" class="modal-close">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="form-group">
-      <label for="nomeSalvar">Nome do grafo:</label>
-      <div class="controls">
-        <input type="text" id="nomeSalvar" placeholder="Digite um nome" />
-      </div>
-    </div>
-    <div class="button-group mt-2">
-      <button onclick="salvarGrafo()" class="btn">
-        <i class="fas fa-save"></i> Salvar
-      </button>
-      <button onclick="fecharModalSalvar()" class="btn">
-        <i class="fas fa-times"></i> Cancelar
-      </button>
-    </div>
-    <p id="msgSalvar" class="msg"></p>
-  </div>
-
-  <!-- Modal de Carregar -->
-  <div id="modalCarregar" class="modal">
-    <div class="modal-header">
-      <h3><i class="fas fa-folder-open"></i> Carregar Grafo</h3>
-      <button onclick="fecharModalCarregar()" class="modal-close">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="form-group">
-      <label for="selectGrafo">Selecione o grafo:</label>
-      <div class="controls">
-        <select id="selectGrafo"></select>
-      </div>
-    </div>
-    <div class="button-group mt-2">
-      <button onclick="confirmarCarregamento()" class="btn">
-        <i class="fas fa-folder-open"></i> Carregar
-      </button>
-      <button onclick="fecharModalCarregar()" class="btn">
-        <i class="fas fa-times"></i> Cancelar
-      </button>
-    </div>
-  </div>
-
-  <script src="/static/script.js"></script>
-</body>
+    <script src="/static/script.js"></script>
+  </body>
 </html>
